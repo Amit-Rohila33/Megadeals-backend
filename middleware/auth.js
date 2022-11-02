@@ -3,7 +3,6 @@ const catchAsyncErrors = require("./catchAsyncErrors");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
-
 exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
   const { token } = req.cookies;
 
@@ -11,9 +10,23 @@ exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Please login to access the resources"));
   }
 
-  const decodeData = jwt.verify(token,process.env.JWT_SECRET)
+  const decodeData = jwt.verify(token, process.env.JWT_SECRET);
 
-  req.user = await User.findById(decodeData.id)
+  req.user = await User.findById(decodeData.id);
 
   next();
 });
+
+exports.authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new ErrorHandler(
+          `Role: ${req.user.role} is not alowed to access this resource`,
+          403
+        )
+      );
+    }
+    next();
+  };
+};
