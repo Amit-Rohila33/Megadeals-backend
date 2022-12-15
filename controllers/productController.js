@@ -36,7 +36,7 @@ exports.getAllProducts = catchAsyncErrors(async (req, res) => {
 
 // get  Product details
 
-exports.getProductDetails = catchAsyncErrors(async (req, res, next) => {
+exports.getProductDetails = catchAsyncErrors(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
   if (!product) {
@@ -145,7 +145,6 @@ exports.getProductReviews = catchAsyncErrors(async (req, res, next) => {
     reviews: product.reviews,
   });
 });
-
 
 // deleting the review
 
